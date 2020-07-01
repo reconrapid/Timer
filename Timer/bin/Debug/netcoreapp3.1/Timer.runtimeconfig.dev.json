@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\JWhat\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\JWhat\\.nuget\\packages"
+    ]
+  }
+}
