@@ -28,6 +28,8 @@ namespace Timer
             InitializeComponent();
         }
 
+        TimeSpan time; //Amount of time to countdown 
+
         enum MAXVALUE
         {
             Hours = 24,
@@ -37,24 +39,89 @@ namespace Timer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string hours = Hours.Text; //Get users input
-            string minutes = Minutes.Text; //Get users input
-            string seconds = Seconds.Text; //Get users input
 
-            System.Diagnostics.Debug.WriteLine(hours + "" + minutes + "" + seconds); //Debug to see what user has input
-            //InterpretInput(userInput);
+            Hours.IsEnabled = false;
+            Minutes.IsEnabled = false;
+            Seconds.IsEnabled = false; 
 
+            int hours = ConvertToInt(Hours); //Get users input
+            int minutes = ConvertToInt(Minutes); //Get users input
+            int seconds = ConvertToInt(Seconds); //Get users input
 
-            //DispatcherTimer dispatcherTimer = new DispatcherTimer();
+            time = new TimeSpan(hours,minutes,seconds); //Set contdown timer
+            System.Diagnostics.Debug.WriteLine("User Input " + time.ToString()); //Debug to see what user has input
+
+            CountDown(); //Start countdown
         }
 
-        private void InterpretInput(string userInput)
+        private void CountDown()
         {
-
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1); //Set how often tick triggers (Every 1 second)
+            timer.Tick += new EventHandler(updateTimer); //Call updateTimer function every tick 
+            timer.Start(); //Start 
         }
 
+        private void updateTimer(object sender, EventArgs e)
+        {
+            time = time.Subtract(TimeSpan.FromSeconds(1));
+
+            System.Diagnostics.Debug.WriteLine(time.ToString()); //Debug to see what user has input
+
+            Hours.Text = time.Hours.ToString();
+            Minutes.Text = time.Minutes.ToString();
+            Seconds.Text = time.Seconds.ToString();
+        }
+
+
+
+
+
+
+
+        //EVENT FUNCTIONS
+        private void Hours_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+            int limit = (int)MAXVALUE.Hours;
+
+            int convertedInt = ConvertToInt(txt);
+
+            if (convertedInt > limit)
+            {
+                txt.Text = limit.ToString();
+            }
+        }
+
+        private void Minutes_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+        }
+
+        private void Seconds_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+        }
+
+        //HELPER FUNCTIONS
+        private int ConvertToInt(TextBox txt)
+        {
+            int convertedInt;
+
+            try
+            {
+                Int32.TryParse(txt.Text, out convertedInt);
+                return convertedInt;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("Failure to convert String to Int");
+                return 0;
+            }
+        }
 
         //OLD CODE FOR USING ONE INPUT BOX FOR HOURS MINUTES & SECONDS
+
         /*private void InterpretInput(string userInput)
         {
             userInput = userInput.Trim(); //Trim whitespace on input

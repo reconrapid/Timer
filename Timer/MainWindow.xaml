@@ -9,9 +9,9 @@
         MinHeight="200" MinWidth="400">
 
     <Grid Margin="10,10,10,10">
-        <TextBox x:Name="Hours" Text="Hours" TextWrapping="NoWrap" VerticalAlignment="Center" Height="40" FontSize="18" TextAlignment="Center" Margin="10,0,270,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="30"/>
         <Button x:Name="Start" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0,0,0,0" Visibility="Visible" BorderBrush="{x:Null}" Width="30" Height="20" Background="{x:Null}" Click="Button_Click" Margin="0,80,0,0"/>
-        <TextBox x:Name="Minutes" Text="Minutes" TextWrapping="NoWrap" VerticalAlignment="Center" Height="40" FontSize="18" TextAlignment="Center" Margin="140,0,140,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="30"/>
-        <TextBox x:Name="Seconds" Text="Seconds" TextWrapping="NoWrap" VerticalAlignment="Center" Height="40" FontSize="18" TextAlignment="Center" Margin="270,0,10,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="30"/>
+        <TextBox x:Name="Hours" Text="Hours" TextWrapping="NoWrap" VerticalAlignment="Center" Height="40" FontSize="18" TextAlignment="Center" Margin="10,0,270,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="30" TextChanged="Hours_TextChanged"/>
+        <TextBox x:Name="Minutes" Text="Minutes" TextWrapping="NoWrap" VerticalAlignment="Center" Height="40" FontSize="18" TextAlignment="Center" Margin="140,0,140,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="30" TextChanged="Minutes_TextChanged"/>
+        <TextBox x:Name="Seconds" Text="Seconds" TextWrapping="NoWrap" VerticalAlignment="Center" Height="40" FontSize="18" TextAlignment="Center" Margin="270,0,10,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="30" TextChanged="Seconds_TextChanged"/>
     </Grid>
 </Window>
