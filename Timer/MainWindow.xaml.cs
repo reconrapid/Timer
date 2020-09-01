@@ -14,11 +14,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Diagnostics;
+using System.Threading;
+using System.Timers;
 
 namespace Timer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// 
+    /// Note: Tried DispatchTImer but this is not accurate enough. Because this runs on the dispatcher thread whenever the thread is busy it is unable to update in time. 
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -49,35 +54,31 @@ namespace Timer
             int seconds = ConvertToInt(Seconds); //Get users input
 
             time = new TimeSpan(hours,minutes,seconds); //Set contdown timer
-            System.Diagnostics.Debug.WriteLine("User Input " + time.ToString()); //Debug to see what user has input
+            Debug.WriteLine("User Input " + time.ToString()); //Debug to see what user has input
 
             CountDown(); //Start countdown
         }
 
         private void CountDown()
         {
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1); //Set how often tick triggers (Every 1 second)
-            timer.Tick += new EventHandler(updateTimer); //Call updateTimer function every tick 
-            timer.Start(); //Start 
+            System.Timers.Timer myTimer = new System.Timers.Timer(); //Create new timer
+            myTimer.Elapsed += new ElapsedEventHandler(updateTimer); //Tell the timer to call our updateTimer function every interval
+            myTimer.Interval = 1000; //Set timer to tick every second
+            myTimer.Enabled = true; //Start the timer
         }
 
         private void updateTimer(object sender, EventArgs e)
         {
             time = time.Subtract(TimeSpan.FromSeconds(1));
+            Debug.WriteLine(time.ToString()); //Debug time left
 
-            System.Diagnostics.Debug.WriteLine(time.ToString()); //Debug to see what user has input
-
-            Hours.Text = time.Hours.ToString();
-            Minutes.Text = time.Minutes.ToString();
-            Seconds.Text = time.Seconds.ToString();
+            this.Dispatcher.Invoke(() => //Updating UI outside of main thread so need to use Dispatcher here. 
+            {
+                Hours.Text = time.Hours.ToString();
+                Minutes.Text = time.Minutes.ToString();
+                Seconds.Text = time.Seconds.ToString();
+            });
         }
-
-
-
-
-
-
 
         //EVENT FUNCTIONS
         private void Hours_TextChanged(object sender, TextChangedEventArgs e)
@@ -96,11 +97,29 @@ namespace Timer
         private void Minutes_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox txt = (TextBox)sender;
+
+            int limit = (int)MAXVALUE.Minutes;
+
+            int convertedInt = ConvertToInt(txt);
+
+            if (convertedInt > limit)
+            {
+                txt.Text = limit.ToString();
+            }
         }
 
         private void Seconds_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox txt = (TextBox)sender;
+
+            int limit = (int)MAXVALUE.Seconds;
+
+            int convertedInt = ConvertToInt(txt);
+
+            if (convertedInt > limit)
+            {
+                txt.Text = limit.ToString();
+            }
         }
 
         //HELPER FUNCTIONS
