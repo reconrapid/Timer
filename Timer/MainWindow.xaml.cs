@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using System.Diagnostics;
 using System.Threading;
 using System.Timers;
+using System.Text.RegularExpressions;
 
 namespace Timer
 {
@@ -33,35 +34,69 @@ namespace Timer
             InitializeComponent();
         }
 
-        TimeSpan time; //Amount of time to countdown 
+        private TimeSpan time; //Amount of time to countdown 
+        private System.Timers.Timer myTimer;
 
-        enum MAXVALUE
+        private enum MAXVALUE
         {
-            Hours = 24,
+            Hours = 12,
             Minutes = 60,
             Seconds = 60,
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Start_Click(object sender, RoutedEventArgs e)
         {
-
+            //Disable editing of the boxes
             Hours.IsEnabled = false;
             Minutes.IsEnabled = false;
-            Seconds.IsEnabled = false; 
+            Seconds.IsEnabled = false;
+
+            //deattach event handler
+            Hours.TextChanged -= confineToLimit;
+            Minutes.TextChanged -= confineToLimit;
+            Seconds.TextChanged -= confineToLimit;
+
+            //Hide the start button & show the stop button
+            Start.Visibility = Visibility.Hidden;
+            Stop.Visibility = Visibility.Visible;
 
             int hours = ConvertToInt(Hours); //Get users input
             int minutes = ConvertToInt(Minutes); //Get users input
             int seconds = ConvertToInt(Seconds); //Get users input
 
-            time = new TimeSpan(hours,minutes,seconds); //Set contdown timer
+            time = new TimeSpan(hours, minutes, seconds); //Set contdown timer
             Debug.WriteLine("User Input " + time.ToString()); //Debug to see what user has input
 
             CountDown(); //Start countdown
         }
 
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            stopTheClock();
+        }
+
+        private void stopTheClock()
+        {
+            //Enable editing of the boxes
+            Hours.IsEnabled = true;
+            Minutes.IsEnabled = true;
+            Seconds.IsEnabled = true;
+
+            //re-attach event handler
+            Hours.TextChanged += confineToLimit;
+            Minutes.TextChanged += confineToLimit;
+            Seconds.TextChanged += confineToLimit;
+
+            Start.Visibility = Visibility.Visible;
+            Stop.Visibility = Visibility.Hidden;
+
+            myTimer.Stop();
+            myTimer.Close();
+        }
+
         private void CountDown()
         {
-            System.Timers.Timer myTimer = new System.Timers.Timer(); //Create new timer
+            myTimer = new System.Timers.Timer(); //Create new timer
             myTimer.Elapsed += new ElapsedEventHandler(updateTimer); //Tell the timer to call our updateTimer function every interval
             myTimer.Interval = 1000; //Set timer to tick every second
             myTimer.Enabled = true; //Start the timer
@@ -69,60 +104,55 @@ namespace Timer
 
         private void updateTimer(object sender, EventArgs e)
         {
-            time = time.Subtract(TimeSpan.FromSeconds(1));
-            Debug.WriteLine(time.ToString()); //Debug time left
-
-            this.Dispatcher.Invoke(() => //Updating UI outside of main thread so need to use Dispatcher here. 
+            if (time.TotalSeconds <= 0)
             {
-                Hours.Text = time.Hours.ToString();
-                Minutes.Text = time.Minutes.ToString();
-                Seconds.Text = time.Seconds.ToString();
-            });
+                this.Dispatcher.Invoke(() =>
+                {
+                    stopTheClock();
+                });
+            }
+            else
+            {
+                time = time.Subtract(TimeSpan.FromSeconds(1));
+                Debug.WriteLine(time.ToString()); //Debug time left
+
+                this.Dispatcher.Invoke(() => //Updating UI outside of main thread so need to use Dispatcher here. 
+                {
+                    Hours.Text = time.Hours.ToString();
+                    Minutes.Text = time.Minutes.ToString();
+                    Seconds.Text = time.Seconds.ToString();
+                });
+            }
         }
 
-        //EVENT FUNCTIONS
-        private void Hours_TextChanged(object sender, TextChangedEventArgs e)
+        private void confineToLimit(object sender, TextChangedEventArgs e)
         {
             TextBox txt = (TextBox)sender;
-            int limit = (int)MAXVALUE.Hours;
+            String TextBoxName = txt.Name;
+            int limit;
+
+            switch (TextBoxName)
+            {
+                case "Hours":
+                    limit = (int)MAXVALUE.Hours;
+                    break;
+                case "Minutes":
+                    limit = (int)MAXVALUE.Minutes;
+                    break;
+                case "Seconds":
+                    limit = (int)MAXVALUE.Seconds;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid textbox.");
+            }
 
             int convertedInt = ConvertToInt(txt);
-
             if (convertedInt > limit)
             {
                 txt.Text = limit.ToString();
             }
         }
 
-        private void Minutes_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox txt = (TextBox)sender;
-
-            int limit = (int)MAXVALUE.Minutes;
-
-            int convertedInt = ConvertToInt(txt);
-
-            if (convertedInt > limit)
-            {
-                txt.Text = limit.ToString();
-            }
-        }
-
-        private void Seconds_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox txt = (TextBox)sender;
-
-            int limit = (int)MAXVALUE.Seconds;
-
-            int convertedInt = ConvertToInt(txt);
-
-            if (convertedInt > limit)
-            {
-                txt.Text = limit.ToString();
-            }
-        }
-
-        //HELPER FUNCTIONS
         private int ConvertToInt(TextBox txt)
         {
             int convertedInt;
@@ -132,26 +162,36 @@ namespace Timer
                 Int32.TryParse(txt.Text, out convertedInt);
                 return convertedInt;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 System.Diagnostics.Debug.WriteLine("Failure to convert String to Int");
                 return 0;
             }
         }
 
-        //OLD CODE FOR USING ONE INPUT BOX FOR HOURS MINUTES & SECONDS
-
-        /*private void InterpretInput(string userInput)
+        //Validation Methods
+        private void ValidateTextBox(object sender, TextCompositionEventArgs e)
         {
-            userInput = userInput.Trim(); //Trim whitespace on input
-            string[] seperators = { " ", ",", "." }; //List of strings we want to seperate text with
-            List<string> split = userInput.Split(seperators, StringSplitOptions.RemoveEmptyEntries).ToList(); //Split the users input using our seperators
+            //Allow only numbers to be entered within the textbox
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
 
-            foreach (string item in split)
+        private void textBox_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Prevent copy, cutting & pasting within the textbox
+            if (e.Command == ApplicationCommands.Copy ||
+                e.Command == ApplicationCommands.Cut ||
+                e.Command == ApplicationCommands.Paste)
             {
-                System.Diagnostics.Debug.WriteLine(item);
+                e.Handled = true;
             }
-        }*/
+        }
 
+        private void textBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            textBox.Dispatcher.BeginInvoke(new Action(() => textBox.SelectAll())); //Select all text within textbox
+        }
     }
 }
