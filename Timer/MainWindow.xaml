@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:Timer"
         mc:Ignorable="d"
         Title="Timer" Height="150" Width="440" FontWeight="Normal"
-        MinHeight="200" MinWidth="440">
+        MinHeight="200" MinWidth="440" Background="#FFD4D4D4">
 
-    <Grid Margin="10,10,10,10">
+    <Grid Margin="15,15,15,15" Background="White" >
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -21,14 +21,14 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="1" Grid.ColumnSpan="3" x:Name="Start" FontSize="18" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0,0,0,0" Visibility="Visible" BorderBrush="{x:Null}" Background="{x:Null}" Click="Start_Click" VerticalContentAlignment="Center"/>
-        <Button Grid.Row="1" Grid.ColumnSpan="3" x:Name="Stop" FontSize="18" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0,0,0,0" Visibility="Hidden" BorderBrush="{x:Null}" Background="{x:Null}" Click="Stop_Click"/>
+        <Button Grid.Row="1" Grid.ColumnSpan="3" x:Name="Start" FontSize="14" Content="START" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0,0,0,0" Visibility="Visible" BorderBrush="{x:Null}" Background="{x:Null}" Click="Start_Click" FontWeight="Bold" />
+        <Button Grid.Row="1" Grid.ColumnSpan="3" x:Name="Stop" FontSize="14" Content="STOP" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0,0,0,0" Visibility="Hidden" BorderBrush="{x:Null}" Background="{x:Null}" Click="Stop_Click" FontWeight="Bold"/>
 
-        <TextBox Grid.Row="0" Grid.Column="0" x:Name="Hours" Text="Hours" TextWrapping="NoWrap" FontSize="24" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="2" TextChanged="confineToLimit" PreviewTextInput="ValidateTextBox" CommandManager.PreviewExecuted="textBox_PreviewExecuted" GotFocus="textBox_GotFocus"/>
+        <TextBox Grid.Row="0" Grid.Column="0" x:Name="Hours" Text="HOURS" TextWrapping="NoWrap" FontSize="18" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="2" TextChanged="confineToLimit" PreviewTextInput="ValidateTextBox" CommandManager.PreviewExecuted="textBox_PreviewExecuted" GotFocus="textBox_GotFocus" Margin="10,20,10,20" FontWeight="Bold" BorderBrush="{x:Null}" />
 
-        <TextBox Grid.Row="0" Grid.Column="1" x:Name="Minutes" Text="Minutes" TextWrapping="NoWrap" FontSize="24" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="2" TextChanged="confineToLimit" PreviewTextInput="ValidateTextBox" CommandManager.PreviewExecuted="textBox_PreviewExecuted" GotFocus="textBox_GotFocus"/>
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="Minutes" Text="MINUTES" TextWrapping="NoWrap" FontSize="18" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="2" TextChanged="confineToLimit" PreviewTextInput="ValidateTextBox" CommandManager.PreviewExecuted="textBox_PreviewExecuted" GotFocus="textBox_GotFocus" Margin="10,20,10,20" FontWeight="Bold" BorderBrush="{x:Null}"/>
 
-        <TextBox Grid.Row="0" Grid.Column="2" x:Name="Seconds" Text="Seconds" TextWrapping="NoWrap" FontSize="24" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="2" TextChanged="confineToLimit" PreviewTextInput="ValidateTextBox" CommandManager.PreviewExecuted="textBox_PreviewExecuted" GotFocus="textBox_GotFocus"/>
+        <TextBox Grid.Row="0" Grid.Column="2" x:Name="Seconds" Text="SECONDS" TextWrapping="NoWrap" FontSize="18" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MaxLines="1" MaxLength="2" TextChanged="confineToLimit" PreviewTextInput="ValidateTextBox" CommandManager.PreviewExecuted="textBox_PreviewExecuted" GotFocus="textBox_GotFocus" Margin="10,20,10,20" FontWeight="Bold" BorderBrush="{x:Null}"/>
         
     </Grid>
 

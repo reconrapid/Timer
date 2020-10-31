@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Timers;
 using System.Text.RegularExpressions;
+using System.Media;
 
 namespace Timer
 {
@@ -92,6 +93,8 @@ namespace Timer
 
             myTimer.Stop();
             myTimer.Close();
+
+            SystemSounds.Beep.Play(); //Play system beep
         }
 
         private void CountDown()
